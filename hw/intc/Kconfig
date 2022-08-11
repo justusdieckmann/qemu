@@ -104,3 +104,6 @@ config LOONGARCH_PCH_MSI
 
 config LOONGARCH_EXTIOI
     bool
+
+config EV3_AINTC
+    bool

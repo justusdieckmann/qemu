@@ -679,3 +679,4 @@ config ARMSSE
 config EV3
     bool
     select SERIAL
+    select EV3_AINTC

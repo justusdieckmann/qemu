@@ -34,6 +34,7 @@
 #include "hw/net/mv88w8618_eth.h"
 #include "hw/loader.h"
 #include "hw/misc/unimp.h"
+#include "hw/intc/ev3_aintc.h"
 
 #define EV3_ENTRY               0xC0008000
 
@@ -52,6 +53,9 @@
 #define EV3_UART0_BASE          0x01C42000
 #define EV3_UART1_BASE          0x01D0C000
 #define EV3_UART2_BASE          0x01D0D000
+
+#define EV3_AINTC_BASE          0xFFFEE000
+#define EV3_AINTC_SIZE          0x2000
 
 // TODO ev3 Timer
 // TODO ev3 SD-Card
@@ -102,10 +106,21 @@ static void ev3_init(MachineState *machine)
 
     cpu = ARM_CPU(cpu_create(machine->cpu_type));
 
+    // Memory init
     memory_region_add_subregion(address_space_mem, EV3_RAM_BASE, machine->ram);
 
     memory_region_init_ram(ramlocal, NULL, "ev3.localram", EV3_LOCAL_RAM_SIZE, &error_fatal);
     memory_region_add_subregion(address_space_mem, EV3_LOCAL_RAM_BASE, ramlocal);
+
+    // Interrupt Controller
+
+    EV3AINTCState *aintc = EV3_AINTC(qdev_new(TYPE_EV3_AINTC));
+    SysBusDevice *sysbusdev = SYS_BUS_DEVICE(aintc);
+    sysbus_mmio_map(sysbusdev, 0, EV3_AINTC_BASE);
+    sysbus_connect_irq(sysbusdev, 0, qdev_get_gpio_in(DEVICE(cpu), ARM_CPU_IRQ));
+    sysbus_connect_irq(sysbusdev, 1, qdev_get_gpio_in(DEVICE(cpu), ARM_CPU_FIQ));
+    // qdev_pass_gpios(DEVICE(aintc), machine, NULL);
+
 
     serial_mm_init(address_space_mem, EV3_UART1_BASE, 2,
                    NULL,
