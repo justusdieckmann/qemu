@@ -127,7 +127,7 @@ static void ev3_init(MachineState *machine)
                    1825000, serial_hd(0), DEVICE_NATIVE_ENDIAN);
     // TODO ev3 serial has dynamic baudclock (
 
-    /////////////////////// PLEASE DONT TELL MOM ///////////////////////
+    /////////////////////// hacking ///////////////////////
 
     memory_region_init_rom(psc0rom, NULL, "ev3.ps0rom", 0x1000, &error_fatal);
     memory_region_add_subregion(address_space_mem, 0x01C10000, psc0rom);
@@ -140,7 +140,7 @@ static void ev3_init(MachineState *machine)
 
     address_space_write_rom(&address_space_memory, 0x01E27128, MEMTXATTRS_UNSPECIFIED, &i, 4);
 
-    ////////////////////// YOU CAN TELL HER AGAIN //////////////////////
+    ////////////////////// end of hacking //////////////////////
 
     // For faster startup just set ptstat = 0x3 (0x01c10128 + 0x01e27128)
 
