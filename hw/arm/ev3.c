@@ -99,7 +99,7 @@ static void ev3_init(MachineState *machine)
     /* For now, we use a fixed - the original - RAM size */
     if (machine->ram_size != mc->default_ram_size) {
         char *sz = size_to_str(mc->default_ram_size);
-        error_report("Invalid RAM size, should be %s", sz);
+        error_setg(&error_fatal, "Invalid RAM size, should be %s", sz);
         g_free(sz);
         exit(EXIT_FAILURE);
     }
@@ -150,7 +150,7 @@ static void ev3_init(MachineState *machine)
     ssize_t r = load_image_targphys("image", EV3_ENTRY,
                             EV3_RAM_SIZE - (EV3_ENTRY - EV3_RAM_BASE));
     if (r < 0) {
-        error_report("Failed to load firmware");
+        error_setg(&error_fatal, "Failed to load firmware");
         exit(1);
     }
 
